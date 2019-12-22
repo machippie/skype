@@ -1,0 +1,38 @@
+# Standards: 0.1
+---
+- name: Fact skype user
+  set_fact:
+    skype_user: "{{ skype_user | default(homebrew_user) | default(ansible_user_id) }}"
+  tags:
+    - skype
+
+- become: "{{ (skype_user != ansible_user_id) | bool }}"
+  become_user: "{{ skype_user }}"
+  block:
+    - name: Install required package
+      ignore_errors: True
+      homebrew_cask:
+        name: skype
+        greedy: True
+        options: appdir=/Applications
+        accept_external_apps: False
+        state: upgraded
+      tags:
+        - skype
+
+    - name: Remove quarantine flag
+      register: skype_quarantine
+      failed_when: skype_quarantine.rc != 0 and "No such xattr" not in skype_quarantine.stderr
+      changed_when: skype_quarantine.rc == 0
+      command: xattr -d com.apple.quarantine /Applications/Skype.app
+      tags:
+        - skype
+
+    - name: Start application
+      when: skype_started
+      changed_when: False
+      command: open -j /Applications/Skype.app
+      tags:
+        - skype
+
+...
