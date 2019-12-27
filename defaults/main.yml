@@ -1,0 +1,10 @@
+# Standards: 0.1
+---
+# @var skype_user:description: User to run user-specific commands
+# @var skype_user:value: skype_user | default(homebrew_user) | default(ansible_user_id)
+# skype_user:
+
+# @var skype_started:description: Start in background after install
+skype_started: True
+
+...
