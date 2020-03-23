@@ -20,19 +20,12 @@
       tags:
         - skype
 
-    - name: Remove quarantine flag
-      register: skype_quarantine
-      failed_when: skype_quarantine.rc != 0 and "No such xattr" not in skype_quarantine.stderr
-      changed_when: skype_quarantine.rc == 0
-      command: xattr -d com.apple.quarantine /Applications/Skype.app
-      tags:
-        - skype
-
-    - name: Start application
-      when: skype_started
-      changed_when: False
-      command: open -j /Applications/Skype.app
-      tags:
-        - skype
+- name: Remove quarantine flag
+  register: skype_quarantine
+  failed_when: skype_quarantine.rc != 0 and "No such xattr" not in skype_quarantine.stderr
+  changed_when: skype_quarantine.rc == 0
+  command: xattr -d com.apple.quarantine /Applications/Skype.app
+  tags:
+    - skype
 
 ...
